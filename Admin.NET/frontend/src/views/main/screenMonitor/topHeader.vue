@@ -3,7 +3,7 @@
     <dv-decoration-8 class="header-left-decoration" />
     <dv-decoration-5 class="header-center-decoration" />
     <dv-decoration-8 class="header-right-decoration" :reverse="true" />
-    <div class="center-title">爱博旺租赁平台数据中心</div>
+    <div class="center-title">之旺平台数据中心</div>
     <div class="title-time">{{ dateFormat(date) }}</div>
   </div>
 </template>

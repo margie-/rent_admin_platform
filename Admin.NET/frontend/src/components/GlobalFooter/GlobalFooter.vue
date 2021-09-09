@@ -3,7 +3,7 @@
     <div class="links">
     </div>
     <div class="copyright">
-      Copyright © 2021 <a target="_blank" >AiBoWang</a> All rights reserved. v1.5.2
+      Copyright © 2021 <a target="_blank" >Zhiwang</a> All rights reserved. v1.5.2
     </div>
   </div>
 </template>

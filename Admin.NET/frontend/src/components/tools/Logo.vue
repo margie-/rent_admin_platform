@@ -25,7 +25,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: '爱博旺',
+      default: '之旺',
       required: false
     },
     showTitle: {
