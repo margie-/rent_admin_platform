@@ -319,8 +319,8 @@ export function GetMapDeviceList (parameter) {
             'lastLocDtime': null,
             'gps_grage': 2,
             'gms_grage': 5,
-            'cur_lat': 31.697666,
-            'cur_log': 120.499183,
+            'cur_lat': 116.46706996,
+            'cur_log': 39.99188446,
             'cur_attitude': 0,
             'cur_speed': 0,
             'cur_direction': 0,
@@ -337,8 +337,8 @@ export function GetMapDeviceList (parameter) {
                 'deviceNo': '53212200889',
                 'alertDtime': '2021-09-15 15:20:33',
                 'alertDate': '2021-09-15',
-                'alertPosition_x': 31.697666,
-                'alertPosition_y': 120.499183,
+                'alertPosition_x': 119.187371,
+                'alertPosition_y': 25.767005,
                 'alertPosition': null,
                 'alertType': '1',
                 'alertInfo': '超速报警',
@@ -392,8 +392,8 @@ export function GetMapDeviceList (parameter) {
             'lastLocDtime': null,
             'gps_grage': null,
             'gms_grage': null,
-            'cur_lat': 29.697666,
-            'cur_log': 120.499183,
+            'cur_lat': 119.3576,
+            'cur_log': 26.226988,
             'cur_attitude': 0,
             'cur_speed': 0,
             'cur_direction': 0,
@@ -465,8 +465,8 @@ export function GetMapDeviceList (parameter) {
             'lastLocDtime': null,
             'gps_grage': null,
             'gms_grage': null,
-            'cur_lat': 31.897666,
-            'cur_log': 119.499183,
+            'cur_lat': 120.668139,
+            'cur_log': 31.183422,
             'cur_attitude': 0,
             'cur_speed': 0,
             'cur_direction': 0,
@@ -538,8 +538,8 @@ export function GetMapDeviceList (parameter) {
             'lastLocDtime': null,
             'gps_grage': null,
             'gms_grage': null,
-            'cur_lat': 31.697666,
-            'cur_log': 120.499183,
+            'cur_lat': 120.742822,
+            'cur_log': 31.41032,
             'cur_attitude': 0,
             'cur_speed': 0,
             'cur_direction': 0,
@@ -624,7 +624,18 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 116.46706996,
+            'longitude': 39.99188446,
+            'speed': 5,
+            'device_time': '2021-09-20 11:49:43',
+            'warning_mark': 0,
+            'status': 790528,
+            'altitude': 0
+          },
+          {
+            'mobile_no': '53212200889',
+            'batteryVoltage': 7.195,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -635,7 +646,29 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
+            'longitude': 120,
+            'speed': 5,
+            'device_time': 0,
+            'warning_mark': 0,
+            'status': 790528,
+            'altitude': 0
+          },
+          {
+            'mobile_no': '53212200889',
+            'batteryVoltage': 7.2,
+            'latitude': 31.697666,
+            'longitude': 120,
+            'speed': 5,
+            'device_time': 0,
+            'warning_mark': 0,
+            'status': 790528,
+            'altitude': 0
+          },
+          {
+            'mobile_no': '53212200889',
+            'batteryVoltage': 7.2,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -646,29 +679,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
-            'longitude': 120,
-            'speed': 5,
-            'device_time': 0,
-            'warning_mark': 0,
-            'status': 790528,
-            'altitude': 0
-          },
-          {
-            'mobile_no': '53212200889',
-            'batteryVoltage': 7.2,
-            'latitude': 32,
-            'longitude': 120,
-            'speed': 5,
-            'device_time': 0,
-            'warning_mark': 0,
-            'status': 790528,
-            'altitude': 0
-          },
-          {
-            'mobile_no': '53212200889',
-            'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -679,7 +690,29 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
+            'longitude': 120,
+            'speed': 5,
+            'device_time': 0,
+            'warning_mark': 0,
+            'status': 790528,
+            'altitude': 0
+          },
+          {
+            'mobile_no': '53212200889',
+            'batteryVoltage': 7.2,
+            'latitude': 31.697666,
+            'longitude': 120,
+            'speed': 5,
+            'device_time': 0,
+            'warning_mark': 0,
+            'status': 790528,
+            'altitude': 0
+          },
+          {
+            'mobile_no': '53212200889',
+            'batteryVoltage': 7.2,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -690,29 +723,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
-            'longitude': 120,
-            'speed': 5,
-            'device_time': 0,
-            'warning_mark': 0,
-            'status': 790528,
-            'altitude': 0
-          },
-          {
-            'mobile_no': '53212200889',
-            'batteryVoltage': 7.2,
-            'latitude': 32,
-            'longitude': 120,
-            'speed': 5,
-            'device_time': 0,
-            'warning_mark': 0,
-            'status': 790528,
-            'altitude': 0
-          },
-          {
-            'mobile_no': '53212200889',
-            'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -723,7 +734,29 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
+            'longitude': 120,
+            'speed': 5,
+            'device_time': 0,
+            'warning_mark': 0,
+            'status': 790528,
+            'altitude': 0
+          },
+          {
+            'mobile_no': '53212200889',
+            'batteryVoltage': 7.2,
+            'latitude': 31.697666,
+            'longitude': 120,
+            'speed': 5,
+            'device_time': 0,
+            'warning_mark': 0,
+            'status': 790528,
+            'altitude': 0
+          },
+          {
+            'mobile_no': '53212200889',
+            'batteryVoltage': 7.2,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -734,7 +767,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -745,18 +778,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
-            'longitude': 120,
-            'speed': 5,
-            'device_time': 0,
-            'warning_mark': 0,
-            'status': 790528,
-            'altitude': 0
-          },
-          {
-            'mobile_no': '53212200889',
-            'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -767,7 +789,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -778,7 +800,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -789,18 +811,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
-            'longitude': 120,
-            'speed': 5,
-            'device_time': 0,
-            'warning_mark': 0,
-            'status': 790528,
-            'altitude': 0
-          },
-          {
-            'mobile_no': '53212200889',
-            'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -811,7 +822,29 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
+            'longitude': 120,
+            'speed': 5,
+            'device_time': 0,
+            'warning_mark': 0,
+            'status': 790528,
+            'altitude': 0
+          },
+          {
+            'mobile_no': '53212200889',
+            'batteryVoltage': 7.2,
+            'latitude': 31.697666,
+            'longitude': 120,
+            'speed': 5,
+            'device_time': 0,
+            'warning_mark': 0,
+            'status': 790528,
+            'altitude': 0
+          },
+          {
+            'mobile_no': '53212200889',
+            'batteryVoltage': 7.2,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -822,7 +855,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -833,7 +866,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -844,7 +877,18 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
+            'longitude': 120,
+            'speed': 5,
+            'device_time': 0,
+            'warning_mark': 0,
+            'status': 790528,
+            'altitude': 0
+          },
+          {
+            'mobile_no': '53212200889',
+            'batteryVoltage': 7.2,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -855,7 +899,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -866,7 +910,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -877,51 +921,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
-            'longitude': 120,
-            'speed': 5,
-            'device_time': 0,
-            'warning_mark': 0,
-            'status': 790528,
-            'altitude': 0
-          },
-          {
-            'mobile_no': '53212200889',
-            'batteryVoltage': 7.2,
-            'latitude': 32,
-            'longitude': 120,
-            'speed': 5,
-            'device_time': 0,
-            'warning_mark': 0,
-            'status': 790528,
-            'altitude': 0
-          },
-          {
-            'mobile_no': '53212200889',
-            'batteryVoltage': 7.195,
-            'latitude': 32,
-            'longitude': 120,
-            'speed': 5,
-            'device_time': 0,
-            'warning_mark': 0,
-            'status': 790528,
-            'altitude': 0
-          },
-          {
-            'mobile_no': '53212200889',
-            'batteryVoltage': 7.2,
-            'latitude': 32,
-            'longitude': 120,
-            'speed': 5,
-            'device_time': 0,
-            'warning_mark': 0,
-            'status': 790528,
-            'altitude': 0
-          },
-          {
-            'mobile_no': '53212200889',
-            'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -932,7 +932,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.191,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -943,7 +943,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -954,7 +954,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -965,7 +965,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -976,7 +976,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -987,7 +987,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -998,7 +998,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1009,7 +1009,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1020,7 +1020,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1031,7 +1031,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1042,7 +1042,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1053,7 +1053,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1064,7 +1064,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1075,7 +1075,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1086,7 +1086,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1097,7 +1097,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1108,7 +1108,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1119,7 +1119,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1130,7 +1130,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1141,7 +1141,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1152,7 +1152,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1163,7 +1163,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1174,7 +1174,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1185,7 +1185,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1196,7 +1196,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1207,7 +1207,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1218,7 +1218,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1229,7 +1229,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1240,7 +1240,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1251,7 +1251,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1262,7 +1262,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.195,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,
@@ -1273,7 +1273,7 @@ export function GetDeviceLocList (parameter) {
           {
             'mobile_no': '53212200889',
             'batteryVoltage': 7.2,
-            'latitude': 32,
+            'latitude': 31.697666,
             'longitude': 120,
             'speed': 5,
             'device_time': 0,

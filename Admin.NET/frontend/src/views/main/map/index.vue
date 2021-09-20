@@ -83,11 +83,11 @@
     </a-col>
     <a-col :md="18" :sm="24" style="positon:relative">
       <div
-        id="timerCt"
+        v-if="showCount"
         class="tip"
         style="position: absolute; top: 5px; left: 65px; z-index: 1000;"
       >
-        <span id="refTimer">5</span> 秒后刷新
+        <span id="refTimer">{{ count }}</span> 秒后刷新
       </div>
       <div class="tip" style="position: absolute; top: 5px; right: 250px; z-index: 1000;">
         <i class="speed-marker" style="background-color: rgb(51, 102, 153);"></i>
@@ -129,6 +129,7 @@ import 'leaflet/dist/leaflet.css'
 import 'leaflet.pm'
 import 'leaflet.pm/dist/leaflet.pm.css'
 import { Empty } from 'ant-design-vue'
+import AMapLoader from '@amap/amap-jsapi-loader'
 
 export default {
   name: 'Map',
@@ -175,16 +176,40 @@ export default {
         pageNo: 0
       },
       loading: false,
-      finished: false
+      finished: false,
+      // 倒计时
+      TIME_COUNT: 30,
+      count: null,
+      timer: null,
+      showCount: false,
+      // 地图
+      geocoderObject: null,
+      AMap: null
     }
   },
   mounted () {
     this.getDeviceOTree()
-    this.getMapDeviceList()
     this.initMap()
     this.initMapPm()
     this.getlatLngs()
     // this.getPointer(this.map)
+    // 初始化高德地图API
+    AMapLoader.load({
+      // 高德开发者密钥 ：平台申请
+      key: 'f8b3c00b5cf78fc551e81ebf18b50342',
+      // 高德API版本: 2.0
+      version: '2.0',
+      // 加载高德内置插件
+      plugins: ['AMap.Geocoder', 'AMap.convertFrom']
+    })
+      .then((AMap) => {
+        this.geocoderObject = new AMap.Geocoder()
+        this.AMap = AMap
+        this.getMapDeviceList()
+      })
+      .catch((err) => {
+        console.error(err)
+      })
   },
   methods: {
     // 设置地图标记和弹窗
@@ -196,8 +221,8 @@ export default {
         that.markerGroup.clearLayers()
       }
 
-      loc.map((res) => {
-        const marker = L.marker([res.cur_lat, res.cur_log]).addTo(map) // 设置标记经纬度
+      loc.map((item) => {
+        const marker = L.marker([item.cur_log, item.cur_lat]).addTo(map) // 设置标记经纬度
         // map.addLayer(marker) // 添加标记
         marker.setIcon(
           L.icon({
@@ -212,118 +237,125 @@ export default {
           minHeight: 500
         }
         // 设备状态展示
-        const deviceStatus = res.deviceStatus ? (res.deviceStatus === 1 ? '在线' : '离线') : '无状态'
-        const fortifiedState = res.fortifiedState ? (res.fortifiedState === 1 ? '设防' : '撤防') : '无状态'
-        const locType = res.locType === 1 ? 'LBS' : 'GPS'
-        const onOffState = res.on_off_state === 1 ? '通电' : '断电'
+        const deviceStatus = item.deviceStatus ? (item.deviceStatus === 1 ? '在线' : '离线') : '无状态'
+        const fortifiedState = item.fortifiedState ? (item.fortifiedState === 1 ? '设防' : '撤防') : '无状态'
+        const locType = item.locType === 1 ? 'LBS' : 'GPS'
+        const onOffState = item.on_off_state === 1 ? '通电' : '断电'
         let dotLine = ''
         let gms = ''
         for (let i = 0; i < 5; i++) {
-          if (i < res.gps_grage) {
+          if (i < item.gps_grage) {
             dotLine = dotLine + '<div class="dotLine green"></div>'
           } else {
             dotLine = dotLine + '<div class="dotLine"></div>'
           }
-          if (i < res.gms_grage) {
+          if (i < item.gms_grage) {
             gms = gms + '<div class="dotLine green"></div>'
           } else {
             gms = gms + '<div class="dotLine"></div>'
           }
         }
-        var content =
-          '<div class="c-popup">' +
-          '<div class="c-row ant-row-flex-space-between">' +
-          '<div class="c-row" style="align-items: center;"><span class="c-row-title" style="padding-right:5px">GPS</span>' +
-          dotLine +
-          '</div>' +
-          '<div class="c-row" style="align-items: center;"><span class="c-row-title" style="padding-right:5px">GSM</span>' +
-          gms +
-          '</div>' +
-          '</div>' +
-          '<div class="c-row">' +
-          '<div><span class="c-row-title">名称：</span>' +
-          res.deviceName +
-          '</div>' +
-          '<div style="width:50%"><span class="c-row-title">状态：</span>' +
-          deviceStatus +
-          '</div>' +
-          '</div>' +
-          '<div class="c-row">' +
-          '<div><span class="c-row-title">设备号：</span>' +
-          res.deviceNo +
-          '</div>' +
-          '<div style="width:50%"><span class="c-row-title">设防状态：</span>' +
-          fortifiedState +
-          '</div>' +
-          '</div>' +
-          '<div class="c-row">' +
-          '<div><span class="c-row-title">控制：</span>' +
-          onOffState +
-          '</div>' +
-          '<div style="width:50%"><span class="c-row-title">定位类型：</span>' +
-          locType +
-          '</div>' +
-          '</div>' +
-          '<div class="c-row">' +
-          '<div><span class="c-row-title">当日里程(公里)：</span>' +
-          res.cur_day_miles +
-          '</div>' +
-          '<div style="width:50%"><span class="c-row-title">总里程(公里)：</span>' +
-          res.cur_gps_miles +
-          '</div>' +
-          '</div>' +
-          '<div class="c-row">' +
-          '<div><span class="c-row-title">电压：</span>' +
-          res.batteryVoltage +
-          '</div>' +
-          '<div style="width:50%"><span class="c-row-title">FAC：</span>' +
-          res.sumMileCount +
-          '</div>' +
-          '</div>' +
-          '<div class="c-row">' +
-          '<div><span class="c-row-title">通信：</span>' +
-          res.lastComDtime +
-          '</div>' +
-          '</div>' +
-          '<div class="c-row">' +
-          '<div><span class="c-row-title">定位：</span>' +
-          res.lastLocDtime +
-          '</div>' +
-          '</div>' +
-          '<div class="c-row">' +
-          '<div><span class="c-row-title">地址：</span>' +
-          res.LocationName +
-          '</div>' +
-          '</div>' +
-          '<div class="c-row-bottom">' +
-          '<a>轨迹</a><a>报警</a><a>指令</a><a>围栏</a><a>街景</a><a>设备信息</a><a>BMS</a><a>指令记录</a>' +
-          '</div>' +
-          '</div>'
-        // var content2 =
-        //   '<div class="c-popup">' +
-        //   '<div class="c-row">' +
-        //   '<div><span class="c-row-title">名称：</span>' +
-        //   res.deviceName +
-        //   '</div>' +
-        //   '<div style="width:50%"><span class="c-row-title">状态：</span>' +
-        //   res.devicestatus +
-        //   '</div>' +
-        //   '</div>' +
-        //   '</div>'
-        // if (index === 0) {
-        //   marker.bindPopup(content2, customerOptions).openPopup() // 默认展开标记点击弹窗
-        //   marker.bindTooltip(res.name).openTooltip() // 默认展开tooltip
-        // } else {
-        marker.bindPopup(content, customerOptions) // 标记点击弹窗
-        // }
-        // 自定义其他事件
-        // marker.on('click', () => {
-        //   console.log(res.deviceName + ' -> 123123')
-        // })
-        that.marker.push(marker) // 保存标记，便于清空
+        that.geocoderObject.getAddress([item.cur_lat, item.cur_log], (status, { regeocode }) => {
+          if (status === 'complete' && regeocode) {
+            // result为对应的地理位置详细信息
+            const locationAdd = regeocode.formattedAddress
+            var content =
+              '<div class="c-popup">' +
+              '<div class="c-row ant-row-flex-space-between">' +
+              '<div class="c-row" style="align-items: center;"><span class="c-row-title" style="padding-right:5px">GPS</span>' +
+              dotLine +
+              '</div>' +
+              '<div class="c-row" style="align-items: center;"><span class="c-row-title" style="padding-right:5px">GSM</span>' +
+              gms +
+              '</div>' +
+              '</div>' +
+              '<div class="c-row">' +
+              '<div><span class="c-row-title">名称：</span>' +
+              item.deviceName +
+              '</div>' +
+              '<div style="width:50%"><span class="c-row-title">状态：</span>' +
+              deviceStatus +
+              '</div>' +
+              '</div>' +
+              '<div class="c-row">' +
+              '<div><span class="c-row-title">设备号：</span>' +
+              item.deviceNo +
+              '</div>' +
+              '<div style="width:50%"><span class="c-row-title">设防状态：</span>' +
+              fortifiedState +
+              '</div>' +
+              '</div>' +
+              '<div class="c-row">' +
+              '<div><span class="c-row-title">控制：</span>' +
+              onOffState +
+              '</div>' +
+              '<div style="width:50%"><span class="c-row-title">定位类型：</span>' +
+              locType +
+              '</div>' +
+              '</div>' +
+              '<div class="c-row">' +
+              '<div><span class="c-row-title">当日里程(公里)：</span>' +
+              item.cur_day_miles +
+              '</div>' +
+              '<div style="width:50%"><span class="c-row-title">总里程(公里)：</span>' +
+              item.cur_gps_miles +
+              '</div>' +
+              '</div>' +
+              '<div class="c-row">' +
+              '<div><span class="c-row-title">电压：</span>' +
+              item.batteryVoltage +
+              '</div>' +
+              '<div style="width:50%"><span class="c-row-title">FAC：</span>' +
+              item.sumMileCount +
+              '</div>' +
+              '</div>' +
+              '<div class="c-row">' +
+              '<div><span class="c-row-title">通信：</span>' +
+              item.lastComDtime +
+              '</div>' +
+              '</div>' +
+              '<div class="c-row">' +
+              '<div><span class="c-row-title">定位：</span>' +
+              item.cur_lat + ' , ' + item.cur_log +
+              '</div>' +
+              '</div>' +
+              '<div class="c-row">' +
+              '<div><span class="c-row-title">地址：</span>' +
+              locationAdd +
+              '</div>' +
+              '</div>' +
+              '<div class="c-row-bottom">' +
+              '<a>轨迹</a><a>报警</a><a>指令</a><a>围栏</a><a>街景</a><a>设备信息</a><a>BMS</a><a>指令记录</a>' +
+              '</div>' +
+              '</div>'
+            // var content2 =
+            //   '<div class="c-popup">' +
+            //   '<div class="c-row">' +
+            //   '<div><span class="c-row-title">名称：</span>' +
+            //   item.deviceName +
+            //   '</div>' +
+            //   '<div style="width:50%"><span class="c-row-title">状态：</span>' +
+            //   item.devicestatus +
+            //   '</div>' +
+            //   '</div>' +
+            //   '</div>'
+            // if (index === 0) {
+            //   marker.bindPopup(content2, customerOptions).openPopup() // 默认展开标记点击弹窗
+            //   marker.bindTooltip(item.name).openTooltip() // 默认展开tooltip
+            // } else {
+            marker.bindPopup(content, customerOptions) // 标记点击弹窗
+            // }
+            // 自定义其他事件
+            // marker.on('click', () => {
+            //   console.log(item.deviceName + ' -> 123123')
+            // })
+            that.marker.push(marker) // 保存标记，便于清空
+          }
+        })
       })
       that.markerGroup = L.layerGroup(that.marker)
       map.addLayer(that.markerGroup)
+      that.refresh()
     },
     // 打开指定弹出框
     openPop (record, index) {
@@ -346,44 +378,83 @@ export default {
         attributionControl: false // 移除右下角leaflet标识
       })
       var mapLayers = {
-        '高德/卫星': L.layerGroup([
-          L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=7&x={x}&y={y}&z={z}', {
+        '高德/街道': L.tileLayer('https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}', {
+          maxZoom: 20,
+          maxNativeZoom: 18,
+          minZoom: 3,
+          attribution: '高德地图 AutoNavi.com',
+          subdomains: '1234'
+        }).addTo(this.map),
+        '高德街道/谷歌卫星': L.layerGroup([
+          L.tileLayer('http://mt3.google.cn/vt/lyrs=m&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}', {
+            maxZoom: 20,
+            minZoom: 3,
+            attribution: '谷歌提供卫星图，高德提供街道图'
+          }),
+          L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=8&x={x}&y={y}&z={z}', {
             maxZoom: 20,
             maxNativeZoom: 18,
             minZoom: 3,
-            attribution: '高德地图 AutoNavi.com',
-            subdomains: '1234'
+            attribution: '谷歌提供卫星图，高德提供街道图',
+            subdomains: '1234',
+            opacity: 0.5
           })
-        ]).addTo(this.map),
-        '高德/街道': L.tileLayer(
-          'https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
-          {
+        ]),
+        '高德/卫星': L.layerGroup([
+          L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=6&x={x}&y={y}&z={z}', {
             maxZoom: 20,
             maxNativeZoom: 18,
             minZoom: 3,
             attribution: '高德地图 AutoNavi.com',
             subdomains: '1234'
-          }
-        ),
-        '智图/街道': L.tileLayer(
-          'https://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}',
-          {
-            maxZoom: 20,
-            maxNativeZoom: 16,
-            minZoom: 3,
-            attribution: '智图 GeoQ.cn'
-          }
-        ),
-        '天地图': L.tileLayer(
-          'http://t7.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk=e3b434f191257368fc43c5b011ab5911',
-          {
+          }),
+          L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=8&x={x}&y={y}&z={z}', {
             maxZoom: 20,
             maxNativeZoom: 18,
             minZoom: 3,
-            attribution: '天地图矢量',
-            subdomains: '1234'
-          }
-        )
+            attribution: '高德地图 AutoNavi.com',
+            subdomains: '1234',
+            opacity: 0.5
+          })
+        ]),
+        '谷歌/卫星': L.tileLayer('http://mt3.google.cn/vt/lyrs=m&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}', {
+          maxZoom: 20,
+          minZoom: 3,
+          attribution: '谷歌 Google.cn'
+        }),
+        '谷歌/街道': L.tileLayer('http://mt3.google.cn/vt/lyrs=m&hl=zh-CN&gl=cn&x={x}&y={y}&z={z}', {
+          maxZoom: 20,
+          minZoom: 3,
+          attribution: '谷歌 Google.cn'
+        })
+        // '高德/卫星': L.layerGroup([
+        //   L.tileLayer('https://webst0{s}.is.autonavi.com/appmaptile?style=7&x={x}&y={y}&z={z}', {
+        //     maxZoom: 20,
+        //     maxNativeZoom: 18,
+        //     minZoom: 3,
+        //     attribution: '高德地图 AutoNavi.com',
+        //     subdomains: '1234'
+        //   })
+        // ]).addTo(this.map),
+        // '高德/街道': L.tileLayer(
+        //   'https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+        //   {
+        //     maxZoom: 20,
+        //     maxNativeZoom: 18,
+        //     minZoom: 3,
+        //     attribution: '高德地图 AutoNavi.com',
+        //     subdomains: '1234'
+        //   }
+        // ),
+        // '智图/街道': L.tileLayer(
+        //   'https://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}',
+        //   {
+        //     maxZoom: 20,
+        //     maxNativeZoom: 16,
+        //     minZoom: 3,
+        //     attribution: '智图 GeoQ.cn'
+        //   }
+        // )
       }
       L.control
         .layers(
@@ -496,14 +567,26 @@ export default {
       GetMapDeviceList(that.deviceParams).then(res => {
         if (res.code === 200) {
           if (res.data.rows.length > 0) {
-            that.deviceList = that.deviceList.concat(res.data.rows)
             that.pageLen = res.data.totalPage
+            const list = res.data.rows
+            list.map(item => {
+              // GPS坐标(WGS84)转为GCJ-02火星坐标(适用高德、谷歌)
+              that.AMap.convertFrom([item.cur_lat, item.cur_log], 'gps', function (status, result) {
+                if (result.info === 'ok') {
+                  item.cur_lat = result.locations[0].lat
+                  item.cur_log = result.locations[0].lng
+                }
+              })
+              return item
+            })
+
+            that.deviceList = that.deviceList.concat(list)
             // 设置标记
             that.getPointer(that.map, that.deviceList)
           }
         }
         that.loading = false
-        console.log('GetMapDeviceList init -> ', res)
+        // console.log('GetMapDeviceList init -> ', res.data.rows)
       })
     },
     // 点击客户树更新设备列表
@@ -534,6 +617,25 @@ export default {
       }
       this.deviceList = []
       this.getMapDeviceList()
+    },
+    // 倒计时刷新
+    refresh () {
+      this.showCount = true
+      if (!this.timer) {
+        this.count = this.TIME_COUNT
+        this.timer = setInterval(() => {
+          if (this.count > 0 && this.count <= this.TIME_COUNT) {
+            this.count--
+          } else {
+            clearInterval(this.timer)
+            this.timer = null
+            // 清空设备列表并刷新设备列表和右侧地图标记
+            this.deviceList = []
+            this.getMapDeviceList()
+            this.refresh()
+          }
+        }, 1000)
+      }
     }
   }
 }

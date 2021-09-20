@@ -1,29 +1,29 @@
 Arguments: 
-  D:\Program Files\nodejs\node.exe D:\Program Files\nodejs\node_global\node_modules\yarn\bin\yarn.js init
+  /usr/local/bin/node /opt/homebrew/Cellar/yarn/1.22.11/libexec/bin/yarn.js init
 
 PATH: 
-  C:\Python39\Scripts\;C:\Python39\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\ProgramData\chocolatey\bin;D:\Program Files\nodejs;D:\Program Files\nodejs\node_global;D:\Program Files\nodejs\node_global\node_modules\yarn\bin;D:\Program Files\nodejs\node_global\node_modules\cnpm\bin;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;D:\Program Files\Microsoft VS Code\bin;C:\ProgramData\Administrator\GitHubDesktop\bin;C:\Users\Administrator\AppData\Roaming\npm
+  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/homebrew/bin:/opt/homebrew/sbin
 
 Yarn version: 
-  1.22.10
+  1.22.11
 
 Node version: 
-  14.17.3
+  14.17.6
 
 Platform: 
-  win32 x64
+  darwin x64
 
 Trace: 
   Error: canceled
-      at Interface.<anonymous> (D:\Program Files\nodejs\node_global\node_modules\yarn\lib\cli.js:136216:13)
-      at Interface.emit (events.js:375:28)
+      at Interface.<anonymous> (/opt/homebrew/Cellar/yarn/1.22.11/libexec/lib/cli.js:137023:13)
+      at Interface.emit (events.js:400:28)
       at Interface._ttyWrite (readline.js:910:16)
       at ReadStream.onkeypress (readline.js:235:10)
-      at ReadStream.emit (events.js:375:28)
+      at ReadStream.emit (events.js:400:28)
       at emitKeys (internal/readline/utils.js:358:14)
       at emitKeys.next (<anonymous>)
       at ReadStream.onData (readline.js:1179:36)
-      at ReadStream.emit (events.js:375:28)
+      at ReadStream.emit (events.js:400:28)
       at addChunk (internal/streams/readable.js:290:12)
 
 npm manifest: 
@@ -73,6 +73,7 @@ npm manifest:
       "vue-clipboard2": "^0.2.1",
       "vue-codemirror-lite": "^1.0.4",
       "vue-cropper": "0.4.9",
+      "vue-infinite-scroll": "^2.0.2",
       "vue-ls": "^3.2.1",
       "vue-quill-editor": "^3.0.6",
       "vue-router": "^3.1.2",
@@ -11865,6 +11866,11 @@ Lockfile:
     version "2.3.4"
     resolved "https://registry.yarnpkg.com/vue-hot-reload-api/-/vue-hot-reload-api-2.3.4.tgz#532955cc1eb208a3d990b3a9f9a70574657e08f2"
     integrity sha512-BXq3jwIagosjgNVae6tkHzzIk6a8MHFtzAdwhnV5VlvPTFxDCvIttgSiHWjdGoTJvXtmRu5HacExfdarRcFhog==
+  
+  vue-infinite-scroll@^2.0.2:
+    version "2.0.2"
+    resolved "https://registry.yarnpkg.com/vue-infinite-scroll/-/vue-infinite-scroll-2.0.2.tgz#ca37a91fe92ee0ad3b74acf8682c00917144b711"
+    integrity sha512-n+YghR059YmciANGJh9SsNWRi1YZEBVlODtmnb/12zI+4R72QZSWd+EuZ5mW6auEo/yaJXgxzwsuhvALVnm73A==
   
   vue-jest@^3.0.5:
     version "3.0.7"
