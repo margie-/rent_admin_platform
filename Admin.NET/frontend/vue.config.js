@@ -28,8 +28,8 @@ const assetsCDN = {
 
 // vue.config.js
 const vueConfig = {
-  lintOnSave: false,//关闭eslintrc语法检查
-  
+  lintOnSave: false, // 关闭eslintrc语法检查
+
   configureWebpack: {
     // webpack plugins
     plugins: [
@@ -85,7 +85,7 @@ const vueConfig = {
   },
 
   devServer: {
-    port: 81,
+    port: 8081,
     proxy: {
       '/api': {
         target: process.env.VUE_APP_API_BASE_URL,
@@ -94,11 +94,11 @@ const vueConfig = {
         pathRewrite: {
           '^/api': '' // 需要rewrite的,
         }
-      },
-      '/hubs': {
-        target: process.env.VUE_APP_SOCKET_BASE_URL,
-        ws: true,
-        changeOrigin: true
+        // },
+        // '/hubs': {
+        //   target: process.env.VUE_APP_SOCKET_BASE_URL,
+        //   ws: true,
+        //   changeOrigin: true
       }
     }
   },

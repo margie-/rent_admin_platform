@@ -1,13 +1,15 @@
 import Vue from 'vue'
-import { login, getLoginUser, logout } from '@/api/modular/system/loginManage'
-import { sysDictTypeTree } from '@/api/modular/system/dictManage'
+import { logout } from '@/api/modular/system/loginManage'
+// import { sysDictTypeTree } from '@/api/modular/system/dictManage'
 import { sysMenuChange } from '@/api/modular/system/menuManage'
 import { ACCESS_TOKEN, ALL_APPS_MENU, DICT_TYPE_TREE_DATA } from '@/store/mutation-types'
-import { sysFileInfoPreview } from '@/api/modular/system/fileManage'
+// import { sysFileInfoPreview } from '@/api/modular/system/fileManage'
 
 import { welcome } from '@/utils/util'
 import store from '../index'
 import router from '../../router'
+
+// import dictData from '@/utils/dictDataTree'
 
 const user = {
   state: {
@@ -50,50 +52,150 @@ const user = {
     // 登录
     Login ({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
-        login(userInfo).then(response => {
-          if (!response.success) {
-            reject(response.message)
-            return
-          }
-          const result = response.data
+        // login(userInfo).then(response => {
+        //   if (!response.success) {
+        //     reject(response.message)
+        //     return
+        //   }
+        //   const result = response.data
+        //   Vue.ls.set(ACCESS_TOKEN, result, 7 * 24 * 60 * 60 * 1000)
+        //   commit('SET_TOKEN', result)
+        //   resolve()
+        // // eslint-disable-next-line handle-callback-err
+        // }).catch(error => {
+        //   // eslint-disable-next-line prefer-promise-reject-errors
+        //   reject('后端未启动或代理错误')
+        // })
+        const abc = {
+          'success': true,
+          'code': 200,
+          'message': '请求成功',
+          'data': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOjE0MjMwNzA3MDkxMDU1MSwiVGVuYW50SWQiOjE0MjMwNzA3MDkxODc4MCwiQWNjb3VudCI6InN1cGVyQWRtaW4iLCJOYW1lIjoi6LaF57qn566h55CG5ZGYIiwiU3VwZXJBZG1pbiI6MSwiaWF0IjoxNjMxMzU0MTQ5LCJuYmYiOjE2MzEzNTQxNDksImV4cCI6MTYzMTQ0MDU0OSwiaXNzIjoiZGlsb24iLCJhdWQiOiJkaWxvbiJ9.vdsivrgdV9m4OfxpDrRIUlXc49Kc0WOFQdj5t7_AppE',
+          'extras': null,
+          'timestamp': 1631354149721
+        }
+          const result = abc.data
           Vue.ls.set(ACCESS_TOKEN, result, 7 * 24 * 60 * 60 * 1000)
           commit('SET_TOKEN', result)
           resolve()
-        // eslint-disable-next-line handle-callback-err
-        }).catch(error => {
-          // eslint-disable-next-line prefer-promise-reject-errors
-          reject('后端未启动或代理错误')
-        })
       })
     },
 
     // 获取用户信息
     GetInfo ({ commit }) {
       return new Promise((resolve, reject) => {
-        getLoginUser().then(response => {
-          if (response.success) {
-            const data = response.data
+        // getLoginUser().then(response => {
+        //   if (response.success) {
+            const userInfo = {
+              'success': true,
+              'code': 0,
+              'message': 'string',
+              'data': {
+                'id': 0,
+                'account': 'string',
+                'nickName': 'string',
+                'name': 'string',
+                'avatar': 'string',
+                'birthday': '2021-09-11T14:51:04.699Z',
+                'sex': 0,
+                'email': 'string',
+                'phone': 'string',
+                'tel': 'string',
+                'adminType': 0,
+                'lastLoginIp': 'string',
+                'lastLoginTime': '2021-09-11T14:51:04.699Z',
+                'lastLoginAddress': 'string',
+                'lastLoginBrowser': 'string',
+                'lastLoginOs': 'string',
+                'loginEmpInfo': {
+                  'jobNum': 'string',
+                  'orgId': 'string',
+                  'orgName': 'string',
+                  'extOrgPos': [
+                    {
+                      'orgId': 0,
+                      'orgCode': 'string',
+                      'orgName': 'string',
+                      'posId': 0,
+                      'posCode': 'string',
+                      'posName': 'string'
+                    }
+                  ],
+                  'positions': [
+                    {
+                      'posId': 0,
+                      'posCode': 'string',
+                      'posName': 'string'
+                    }
+                  ]
+                },
+                'apps': [
+                  {
+                    'id': 0,
+                    'name': 'string',
+                    'code': 'string',
+                    'active': 'string',
+                    'sort': 0
+                  }
+                ],
+                'roles': [
+                  {
+                    'roleType': 1,
+                    'id': 0,
+                    'code': 'string',
+                    'name': 'string'
+                  }
+                ],
+                'permissions': [
+                  'string'
+                ],
+                'menus': [
+                  {
+                    'id': 0,
+                    'pid': 0,
+                    'name': 'string',
+                    'component': 'string',
+                    'redirect': 'string',
+                    'meta': {
+                      'title': 'string',
+                      'icon': 'string',
+                      'show': true,
+                      'target': 'string',
+                      'link': 'string'
+                    },
+                    'path': 'string',
+                    'hidden': true
+                  }
+                ],
+                'dataScopes': [
+                  0
+                ]
+              },
+              'extras': 'string',
+              'timestamp': 0
+            }
+            const data = userInfo.data
             commit('SET_ADMINTYPE', data.adminType)
             commit('SET_ROLES', 1)
             commit('SET_BUTTONS', data.permissions)
             commit('SET_INFO', data)
             commit('SET_NAME', { name: data.name, welcome: welcome() })
-            if (data.avatar != null) {
-              sysFileInfoPreview({ id: data.avatar }).then((res) => {
-                commit('SET_AVATAR', window.URL.createObjectURL(new Blob([res])))
-              }).catch((err) => {
-                this.$message.error('预览错误：' + err.message)
-              })
-              // commit('SET_AVATAR', process.env.VUE_APP_API_BASE_URL + '/sysFileInfo/preview?id=' + data.avatar)
-            }
+            // if (data.avatar != null) {
+            //   sysFileInfoPreview({ id: data.avatar }).then((res) => {
+            //     commit('SET_AVATAR', window.URL.createObjectURL(new Blob([res])))
+            //   }).catch((err) => {
+            //     this.$message.error('预览错误：' + err.message)
+            //   })
+            //   // commit('SET_AVATAR', process.env.VUE_APP_API_BASE_URL + '/sysFileInfo/preview?id=' + data.avatar)
+            // }
             resolve(data)
-          } else {
-            // eslint-disable-next-line no-undef
-            reject(new Error(data.message))
-          }
-        }).catch(error => {
-          reject(error)
-        })
+          // } else {
+          //   // eslint-disable-next-line no-undef
+          //   reject(new Error(data.message))
+          // }
+        // }).catch(error => {
+        //   reject(error)
+        // })
       })
     },
 
@@ -119,18 +221,19 @@ const user = {
     // 加载所有字典数据
     dictTypeData () {
       return new Promise((resolve, reject) => {
-        sysDictTypeTree().then((data) => {
-          if (data.success) {
-            const result = data.data
-            Vue.ls.set(DICT_TYPE_TREE_DATA, result)
+        // sysDictTypeTree().then((data) => {
+        //   if (data.success) {
+
+            // const result = dictData.data
+            // Vue.ls.set(DICT_TYPE_TREE_DATA, result)
             resolve()
-          } else {
-            // eslint-disable-next-line no-undef
-            reject(new Error(data.message))
-          }
-        }).catch(error => {
-          reject(error)
-        })
+        //   } else {
+        //     // eslint-disable-next-line no-undef
+        //     reject(new Error(data.message))
+        //   }
+        // }).catch(error => {
+        //   reject(error)
+        // })
       })
     },
 

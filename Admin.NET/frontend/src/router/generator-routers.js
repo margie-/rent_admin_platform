@@ -159,11 +159,11 @@ const rootRouter = {
  */
 export const generatorDynamicRouter = (data) => {
   return new Promise((resolve, reject) => {
-    const resNav = data.antDesignmenus
+    // const resNav = data.antDesignmenus
     const menuNav = []
     const childrenNav = []
     //      后端数据, 根级树数组,  根级 PID
-    listToTree(resNav, childrenNav, 0)
+    // listToTree(resNav, childrenNav, 0)
 
     /**
      * 增加静态网页

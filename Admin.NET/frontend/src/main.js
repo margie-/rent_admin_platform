@@ -1,3 +1,10 @@
+/*
+ * @Author: ulongx
+ * @Date: 2021-09-11 00:10:58
+ * @LastEditors: ulongx
+ * @LastEditTime: 2021-09-11 23:51:02
+ * @FilePath: /frontend/src/main.js
+ */
 // with polyfills
 import 'core-js/stable'
 import 'regenerator-runtime/runtime'
@@ -7,12 +14,12 @@ import router from './router'
 import store from './store/'
 import { VueAxios } from './utils/request'
 // WARNING: `mockjs` NOT SUPPORT `IE` PLEASE DO NOT USE IN `production` ENV.
-import './mock'
+// import './mock'
 
 import bootstrap from './core/bootstrap'
 import './core/lazy_use'
 import './permission'
-import './utils/filter'
+// import './utils/filter'
 import './components/global.less'
 import socket from './utils/socket'
 import { Dialog } from '@/components'

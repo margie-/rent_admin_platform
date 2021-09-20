@@ -81,7 +81,7 @@
         >忘记密码</router-link>
       </a-form-item>
 
-      <a-form-item>
+      <!-- <a-form-item>
         <Verify
           @success="verifySuccess"
           :mode="'pop'"
@@ -89,7 +89,7 @@
           :imgSize="{ width: '330px', height: '155px' }"
           ref="verify"
         ></Verify>
-      </a-form-item>
+      </a-form-item> -->
 
       <a-form-item style="margin-top:24px">
         <a-button
@@ -129,13 +129,12 @@
 <script>
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
-import { getSmsCaptcha, getCaptchaOpen } from '@/api/modular/system/loginManage'
-import Verify from '@/components/verifition/Verify'
+// import { getSmsCaptcha, getCaptchaOpen } from '@/api/modular/system/loginManage'
+// import Verify from '@/components/verifition/Verify'
 
 export default {
   components: {
-    TwoStepCaptcha,
-    Verify
+    TwoStepCaptcha
   },
   data () {
     return {
@@ -163,7 +162,7 @@ export default {
     }
   },
   created () {
-    this.getCaptchaOpen()
+    // this.getCaptchaOpen()
   },
   methods: {
     ...mapActions(['Login', 'Logout', 'dictTypeData']),
@@ -171,11 +170,11 @@ export default {
      * 获取验证码开关
      */
     getCaptchaOpen () {
-      getCaptchaOpen().then((res) => {
-        if (res.success) {
-          this.captchaOpen = res.data
-        }
-      })
+      // getCaptchaOpen().then((res) => {
+      //   if (res.success) {
+      //     this.captchaOpen = res.data
+      //   }
+      // })
     },
     // handler
     handleUsernameOrEmail (rule, value, callback) {
@@ -263,21 +262,21 @@ export default {
             }
           }, 1000)
 
-          const hide = this.$message.loading('验证码发送中..', 0)
-          getSmsCaptcha({ mobile: values.mobile }).then(res => {
-            setTimeout(hide, 2500)
-            this.$notification['success']({
-              message: '提示',
-              description: '验证码获取成功，您的验证码为：' + res.result.captcha,
-              duration: 8
-            })
-          }).catch(err => {
-            setTimeout(hide, 1)
-            clearInterval(interval)
-            state.time = 60
-            state.smsSendBtn = false
-            this.requestFailed(err)
-          })
+          // const hide = this.$message.loading('验证码发送中..', 0)
+          // getSmsCaptcha({ mobile: values.mobile }).then(res => {
+          //   setTimeout(hide, 2500)
+          //   this.$notification['success']({
+          //     message: '提示',
+          //     description: '验证码获取成功，您的验证码为：' + res.result.captcha,
+          //     duration: 8
+          //   })
+          // }).catch(err => {
+          //   setTimeout(hide, 1)
+          //   clearInterval(interval)
+          //   state.time = 60
+          //   state.smsSendBtn = false
+          //   this.requestFailed(err)
+          // })
         }
       })
     },

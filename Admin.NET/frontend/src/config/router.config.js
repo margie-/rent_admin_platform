@@ -93,6 +93,18 @@ export const constantRouterMap = [
   {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/system/exception/404')
+  },
+
+  {
+    path: '/map',
+    name: '地图1',
+    component: () => import(/* webpackChunkName: "fail" */ '@/views/main/map/index')
+  },
+
+  {
+    path: '/playback',
+    name: '轨迹',
+    component: () => import(/* webpackChunkName: "fail" */ '@/views/main/map/index222')
   }
 
 ]
