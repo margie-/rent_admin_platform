@@ -23,14 +23,18 @@
               v-decorator="['date-time-picker', {rules: [{ type: 'object', required: true, message: '请选择开始时间' }]}]"
               show-time
               format="YYYY-MM-DD HH:mm:ss"
-            />
+            >
+              <a-icon slot="suffixIcon" type="clock-circle" />
+            </a-date-picker>
           </a-form-model-item>
           <a-form-model-item label="结束时间">
             <a-date-picker
               v-decorator="['date-time-picker', {rules: [{ type: 'object', required: true, message: '请选择结束时间' }]}]"
               show-time
               format="YYYY-MM-DD HH:mm:ss"
-            />
+            >
+              <a-icon slot="suffixIcon" type="clock-circle" />
+            </a-date-picker>
           </a-form-model-item>
           <a-form-model-item label="回放速度">
             <a-slider id="test" :default-value="30" />
@@ -55,7 +59,7 @@
             expandRowByClick
             size="middle"
             :columns="deviceCol"
-            :data-source="devi"
+            :data-source="deviceLocList"
             :showHeader="false"
             :loading="loading"
             :pagination="false"
@@ -64,10 +68,11 @@
             <div slot="info" slot-scope="record">
               <div style="padding-bottom:5px">
                 <a-tag color="blue">起点</a-tag>
-                {{ record }}
+                {{ record.addr }}
               </div>
               <div>
-                <a-tag color="orange">时间</a-tag>
+                <!-- <a-tag color="orange">时间</a-tag> -->
+                <a-icon type="clock-circle" />
                 {{ record.device_time }}
               </div>
             </div>
@@ -147,7 +152,6 @@ export default {
         scopedSlots: { customRender: 'info' }
       }],
       deviceLocList: [],
-      devi: [],
       deviceParams: {
         DeviceNo: ''
       },
@@ -196,14 +200,17 @@ export default {
     // 设置地图标记和弹窗
     getPointer (map, loc) {
       const that = this // 防止变量冲突
+      const latlngs = [] // 定义坐标集
 
       // 如果有标记则清空
       if (that.markerGroup !== null) {
         that.markerGroup.clearLayers()
       }
       console.log('kic', loc)
-      loc.map((item) => {
-        const marker = L.marker([item.latitude, item.longitude]).addTo(map) // 设置标记经纬度
+      // 设置标记
+      loc.map((item, index) => {
+        latlngs.push([item.longitude, item.latitude]) // 添加坐标集
+        const marker = L.marker([item.longitude, item.latitude]).addTo(map) // 设置标记经纬度
         // map.addLayer(marker) // 添加标记
         marker.setIcon(
           L.icon({
@@ -235,11 +242,19 @@ export default {
           '</div>' +
           '</div>' +
           '</div>'
-        marker.bindPopup(content, customerOptions) // 标记点击弹窗
+        if (index === 0) {
+          marker.bindPopup(content, customerOptions).openPopup() // 标记点击弹窗，并打开
+        } else {
+          marker.bindPopup(content, customerOptions) // 标记点击弹窗
+        }
         that.marker.push(marker) // 保存标记，便于清空
       })
       that.markerGroup = L.layerGroup(that.marker)
       map.addLayer(that.markerGroup)
+      console.log('坐标->', latlngs)
+      // 绘制折线
+      const polyline = L.polyline(latlngs, { color: 'red' }).addTo(map)
+      map.fitBounds(polyline.getBounds())
     },
     // 打开指定弹出框
     openPop (record, index) {
@@ -438,44 +453,29 @@ export default {
           if (res.data.rows.length > 0) {
             that.pageLen = res.data.totalPage
             const list = res.data.rows
-            // const list = res.data.rows.map(item => {
-            //   // let lat = null
-            //   // let lng = null
-            //   // let addr = null
-            //   // GPS坐标(WGS84)转为GCJ-02火星坐标(适用高德、谷歌)
-            //   that.AMap.convertFrom([item.latitude, item.longitude], 'gps', function (status, result) {
-            //     if (result.info === 'ok') {
-            //       item.latitude = result.locations[0].lat
-            //       item.longitude = result.locations[0].lng
+            list.map((item, index) => {
+              // GPS坐标(WGS84)转为GCJ-02火星坐标(适用高德、谷歌)
+              that.AMap.convertFrom([item.latitude, item.longitude], 'gps', function (status, result) {
+                if (result.info === 'ok') {
+                  that.$set(list[index], 'latitude', result.locations[0].lat)
+                  that.$set(list[index], 'longitude', result.locations[0].lng)
+                }
+              })
 
-            //       that.geocoderObject.getAddress([item.latitude, item.longitude], (status, { regeocode }) => {
-            //         if (status === 'complete' && regeocode) {
-            //           // result为对应的地理位置详细信息
-            //           // that.$set(item.addr, regeocode.formattedAddress)
-            //           item.addr = regeocode.formattedAddress
-            //         } else {
-            //           // that.$set(item.addr, '地址无法解析')
-            //           item.addr = regeocode.addr
-            //         }
-            //         // console.log('未负值', lat, lng, addr)
-            //         // return {
-            //         //   ...item,
-            //         //   ...{
-            //         //     latitude: lat,
-            //         //     longitude: lng,
-            //         //     addr: addr
-            //         //   }
-            //         // }
-            //       })
-            //     }
-            //   })
-            // })
-            that.formatLatLng(list).then(res => {
-              console.log('未负值', res)
-              that.deviceLocList = that.deviceLocList.concat(res)
-              // 设置标记
-              that.getPointer(that.map, that.deviceLocList)
+              // 逆地理解析，坐标解析为地址
+              that.geocoderObject.getAddress([item.latitude, item.longitude], (status, { regeocode }) => {
+                if (status === 'complete' && regeocode) {
+                  // result为对应的地理位置详细信息
+                  that.$set(list[index], 'addr', regeocode.formattedAddress)
+                } else {
+                  that.$set(list[index], 'addr', '地址无法解析')
+                }
+              })
             })
+            console.log('未负值', res)
+            that.deviceLocList = that.deviceLocList.concat(list)
+            // 设置标记
+            that.getPointer(that.map, that.deviceLocList)
           }
         }
         that.loading = false
@@ -490,31 +490,6 @@ export default {
       }
       this.deviceLocList = []
       this.getDeviceLocList()
-    },
-    // 改变坐标
-    formatLatLng (data) {
-      const that = this
-      return new Promise((resolve, reject) => {
-        data.map(item => {
-          // GPS坐标(WGS84)转为GCJ-02火星坐标(适用高德、谷歌)
-          that.AMap.convertFrom([item.longitude, item.latitude], 'gps', function (status, result) {
-            if (result.info === 'ok') {
-              item.latitude = result.locations[0].lat
-              item.longitude = result.locations[0].lng
-
-              that.geocoderObject.getAddress([item.longitude, item.latitude], (status, { regeocode }) => {
-                if (status === 'complete' && regeocode) {
-                  // result为对应的地理位置详细信息
-                  item.addr = regeocode.formattedAddress
-                } else {
-                  item.addr = '地址无法解析'
-                }
-              })
-            }
-          })
-        })
-        resolve(data)
-      })
     }
   }
 }
