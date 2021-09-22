@@ -70,18 +70,15 @@
             <div slot="deviceNo" slot-scope="record">
               <div>{{ record }}</div>
             </div>
-            <div slot="expandedRowRender" slot-scope="record" class="expendInfo">
-              <router-link
-                target="_blank"
-                :to="{path: '/playback',query: {mac_id: record.deviceNo}}"
-              >轨迹</router-link>
-              <a href="javascript:void(0);">报警</a>
+            <div slot="expandedRowRender" class="expendInfo">
+              <router-link target="_blank" :to="{path: '/playback',query: {mac_id: deviceNo}}">轨迹</router-link>
+              <a v-if="alarmList != null" href="javascript:void(0);">报警</a>
             </div>
           </a-table>
         </a-tab-pane>
       </a-tabs>
     </a-col>
-    <a-col :md="18" :sm="24" style="positon:relative">
+    <a-col :md="18" :sm="24" style="positon:relative; height:100%">
       <div
         v-if="showCount"
         class="tip"
@@ -99,6 +96,26 @@
         <i class="speed-marker" style="background-color: rgb(149, 2, 34);"></i>
         <span class="p-lr5">超速</span>(1.5)
       </div>
+      <a-popover trigger="click" placement="topRight">
+        <template slot="content">
+          <a-table
+            :columns="alarmColumns"
+            :data-source="alarmData"
+            size="middle"
+            :bordered="false"
+            :pagination="false"
+          >
+            <a slot="name" slot-scope="text">{{ text }}</a>
+          </a-table>
+        </template>
+        <a-button
+          v-if="showAlarmBtn"
+          icon="alert"
+          type="danger"
+          size="small"
+          style="position: absolute; bottom: 15px; right: 30px; z-index: 1000; font-size:12px;"
+        >报警信息</a-button>
+      </a-popover>
       <div>
         <div id="map">
           <a-drawer
@@ -184,7 +201,30 @@ export default {
       showCount: false,
       // 地图
       geocoderObject: null,
-      AMap: null
+      AMap: null,
+      // 报警
+      showAlarmBtn: false,
+      alarmColumns: [{
+        title: '设备',
+        dataIndex: 'deviceNo',
+        key: 'deviceNo'
+      }, {
+        title: '报警类型',
+        dataIndex: 'alertInfo',
+        key: 'alertInfo'
+      }, {
+        title: '时间',
+        dataIndex: 'alertDtime',
+        key: 'alertDtime'
+      }, {
+        title: '速度(Km/h)',
+        dataIndex: 'curSpeed',
+        key: 'curSpeed'
+      }],
+      alarmData: [],
+      // 选中设备信息
+      deviceNo: null,
+      alarmList: null
     }
   },
   mounted () {
@@ -324,8 +364,7 @@ export default {
               locationAdd +
               '</div>' +
               '</div>' +
-              '<div class="c-row-bottom">' +
-              '<a>轨迹</a><a>报警</a><a>指令</a><a>围栏</a><a>街景</a><a>设备信息</a><a>BMS</a><a>指令记录</a>' +
+              '<div class="c-row-bottom" ref="cPopBtm">' +
               '</div>' +
               '</div>'
             // var content2 =
@@ -365,6 +404,17 @@ export default {
           click: () => {
             that.map.setView(L.latLng(record.cur_lat, record.cur_log), 13)
             that.marker[index].openPopup()
+            if (record.alarmList != null) {
+              that.showAlarmBtn = true
+              record.alarmList.forEach(ele => {
+                that.alarmData.push({ 'deviceNo': ele.deviceNo, 'alertInfo': ele.alertInfo, 'alertDtime': ele.alertDtime, 'curSpeed': ele.curSpeed })
+              })
+            } else {
+              that.showAlarmBtn = false
+            }
+            // 设置当前选中设置信息
+            that.deviceNo = record.deviceNo
+            that.alarmList = record.alarmList
           }
         }
       }
