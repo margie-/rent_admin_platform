@@ -53,7 +53,7 @@
           </a-row>
           <a-row type="flex" justify="center" style="width:100%; padding-bottom:10px;">
             <a-button type="primary" icon="search" html-type="submit">查询</a-button>
-            <a-button style="margin-left: 10px;" icon="play-circle">回放</a-button>
+            <a-button style="margin-left: 10px;" icon="play-circle" @click="play">回放</a-button>
           </a-row>
         </a-form-model>
       </a-row>
@@ -245,7 +245,8 @@ export default {
       recordActive: null,
       marks: {},
       sumMarks: 0,
-      marksWay: {}
+      marksWay: {},
+      timer: null
     }
   },
   mounted () {
@@ -316,7 +317,7 @@ export default {
         }
         // 设置播放条
         that.$set(that.marks, l, item.mileage)
-        that.$set(that.marksWay, index, { color: bColor, width: item.mileage / that.sumMarks * 100 })
+        that.$set(that.marksWay, index, { pos: l, color: bColor, width: item.mileage / that.sumMarks * 100 })
         console.log('marks', that.marksWay)
         // 自定义其他事件
         marker.on('click', () => {
@@ -609,12 +610,30 @@ export default {
     // 播放路径
     play () {
       const that = this
+      that.showPlay = true
       that.playActive = true
+      let index = 0
+      const len = that.marker.length
       that.map.setView(L.latLng(that.recordActive.latitude, that.recordActive.longitude))
-      that.setPopup(that.marker[0], that.recordActive)
+      that.setPopup(that.marker[index], that.recordActive)
+      that.PlayPos = that.marksWay[index].pos
+      that.timer = setInterval(() => {
+        if (index < len - 1) {
+          index++
+          that.map.setView(L.latLng(that.recordActive.latitude, that.recordActive.longitude))
+          that.setPopup(that.marker[index], that.recordActive)
+          that.PlayPos = that.marksWay[index].pos
+        } else {
+          clearInterval(that.timer)
+          that.timer = null
+          that.pause()
+        }
+      }, 2000)
     },
     // 暂停路径
     pause () {
+      clearInterval(this.timer)
+      this.timer = null
       const that = this
       that.playActive = false
     }
@@ -753,7 +772,8 @@ export default {
 .ant-slider-handle {
   z-index: 10;
 }
-.ant-slider-dot-active {
+.ant-slider-dot-active,
+.ant-slider-mark {
   display: none;
 }
 </style>
