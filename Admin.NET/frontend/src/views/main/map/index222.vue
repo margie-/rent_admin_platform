@@ -20,18 +20,22 @@
           </a-form-model-item>
           <a-form-model-item label="开始时间">
             <a-date-picker
+              :default-value="moment(new Date(), 'YYYY-MM-DD HH:mm:ss')"
               v-decorator="['date-time-picker', {rules: [{ type: 'object', required: true, message: '请选择开始时间' }]}]"
               show-time
               format="YYYY-MM-DD HH:mm:ss"
+              @change="onChangeFrom"
             >
               <a-icon slot="suffixIcon" type="clock-circle" />
             </a-date-picker>
           </a-form-model-item>
           <a-form-model-item label="结束时间">
             <a-date-picker
+              :default-value="moment(new Date(new Date() - 60000*60), 'YYYY-MM-DD HH:mm:ss')"
               v-decorator="['date-time-picker', {rules: [{ type: 'object', required: true, message: '请选择结束时间' }]}]"
               show-time
               format="YYYY-MM-DD HH:mm:ss"
+              @change="onChangeTo"
             >
               <a-icon slot="suffixIcon" type="clock-circle" />
             </a-date-picker>
@@ -67,7 +71,9 @@
           >
             <div slot="info" slot-scope="record">
               <div style="padding-bottom:5px">
-                <a-tag color="blue">起点</a-tag>
+                <a-tag v-if="record.index == 0" color="blue">起点</a-tag>
+                <a-tag v-else-if="record.index == record.length - 1" color="blue">结束</a-tag>
+                <a-tag v-else color="blue">p{{ record.index }}</a-tag>
                 {{ record.addr }}
               </div>
               <div>
@@ -80,7 +86,7 @@
         </a-tab-pane>
       </a-tabs>
     </a-col>
-    <a-col :md="18" :sm="24" style="positon:relative">
+    <a-col :md="18" :sm="24" style="positon:relative; height:100%">
       <div class="tip" style="position: absolute; top: 5px; right: 250px; z-index: 1000;">
         <i class="speed-marker" style="background-color: rgb(51, 102, 153);"></i>
         <span class="p-lr5">慢速</span>
@@ -89,8 +95,44 @@
         <i class="speed-marker" style="background-color: rgb(245, 7, 19);"></i>
         <span class="p-lr5">超速</span>
         <i class="speed-marker" style="background-color: rgb(149, 2, 34);"></i>
-        <span class="p-lr5">超速</span>(1.5)
+        <span class="p-lr5">超速(1.5)</span>
       </div>
+      <div v-if="showPlay">
+        <a-button-group style="position: absolute; top: 15px; left: 70px; z-index: 1000;">
+          <a-button :class="{'is-active': playActive == true}" icon="play-circle" @click="play"></a-button>
+          <a-button :class="{'is-active': playActive == false}" icon="pause-circle" @click="pause"></a-button>
+        </a-button-group>
+        <div
+          style="position: absolute; top: 10px; left: 160px; right: 150px; z-index: 1000; text-align: center;"
+        >
+          <a-slider v-model="PlayPos" :marks="marks" :step="null"></a-slider>
+          <div style="position:absolute; top:5px; width:100%; z-index:1">
+            <div
+              class="marks"
+              v-for="(item, index) in marksWay"
+              :key="index"
+              :style="{ width:item.width + '%', background:item.color}"
+            ></div>
+          </div>
+        </div>
+      </div>
+      <a-popover trigger="click" placement="topRight">
+        <template slot="content">
+          <a-table
+            :columns="deviceColumns"
+            :data-source="deviceLocList"
+            size="middle"
+            :bordered="false"
+          >
+            <a slot="name" slot-scope="text">{{ text }}</a>
+          </a-table>
+        </template>
+        <a-button
+          icon="alert"
+          size="small"
+          style="position: absolute; bottom: 15px; right: 30px; z-index: 1000; font-size:12px; background-color:#909399; color:#fff"
+        >轨迹列表</a-button>
+      </a-popover>
       <div>
         <div id="map">
           <a-drawer
@@ -122,6 +164,7 @@ import 'leaflet.pm'
 import 'leaflet.pm/dist/leaflet.pm.css'
 import { Empty } from 'ant-design-vue'
 import AMapLoader from '@amap/amap-jsapi-loader'
+import moment from 'moment'
 
 export default {
   name: 'Map',
@@ -146,6 +189,36 @@ export default {
       geojsonFeature: {},
       OwnedOrg: '',
       // 设备列表
+      deviceColumns: [{
+        title: '序号',
+        dataIndex: 'index',
+        key: 'index'
+      }, {
+        title: '时间',
+        dataIndex: 'device_time',
+        key: 'device_time'
+      }, {
+        title: '经度',
+        dataIndex: 'latitude',
+        key: 'latitude'
+      }, {
+        title: '纬度',
+        dataIndex: 'longitude',
+        key: 'longitude'
+      }, {
+        title: '速度(Km/h)',
+        dataIndex: 'speed',
+        key: 'speed'
+      }, {
+        title: '电压(V)',
+        dataIndex: 'batteryVoltage',
+        key: 'batteryVoltage'
+      }, {
+        title: '地址',
+        dataIndex: 'addr',
+        key: 'addr',
+        width: 300
+      }],
       deviceCol: [{
         title: '设备信息',
         key: 'info',
@@ -160,12 +233,19 @@ export default {
       // 查询框
       form: {
         deviceNo: this.$route.query.mac_id,
-        from: '',
-        to: ''
+        from: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+        to: moment(new Date(new Date() - 60000 * 60)).format('YYYY-MM-DD HH:mm:ss')
       },
       // 地图
       geocoderObject: null,
-      AMap: null
+      AMap: null,
+      playActive: false,
+      PlayPos: 0,
+      showPlay: false,
+      recordActive: null,
+      marks: {},
+      sumMarks: 0,
+      marksWay: {}
     }
   },
   mounted () {
@@ -190,13 +270,10 @@ export default {
       .catch((err) => {
         console.error(err)
       })
-  },
-  watch: {
-    deviceLocList (newVal) {
-      this.deviceLocList = newVal
-    }
+    console.log('date', new Date())
   },
   methods: {
+    moment,
     // 设置地图标记和弹窗
     getPointer (map, loc) {
       const that = this // 防止变量冲突
@@ -206,7 +283,9 @@ export default {
       if (that.markerGroup !== null) {
         that.markerGroup.clearLayers()
       }
-      console.log('kic', loc)
+      console.log('改变后的数据', loc)
+      let l = 0
+      let m = 0
       // 设置标记
       loc.map((item, index) => {
         latlngs.push([item.longitude, item.latitude]) // 添加坐标集
@@ -219,34 +298,30 @@ export default {
             iconSize: [20, 25]
           })
         )
-        var customerOptions = {
-          closeButton: true,
-          minWidth: 200,
-          minHeight: 500
-        }
-        var content =
-          '<div class="c-popup">' +
-          '<div class="c-row">' +
-          '<div><span class="c-row-title">速度(Km/h)：</span>' +
-          item.speed +
-          ' Km/h</div>' +
-          '</div>' +
-          '<div class="c-row">' +
-          '<div><span class="c-row-title">电压：</span>' +
-          item.batteryVoltage +
-          ' V</div>' +
-          '</div>' +
-          '<div class="c-row">' +
-          '<div><span class="c-row-title">时间：</span>' +
-          item.device_time +
-          '</div>' +
-          '</div>' +
-          '</div>'
+
         if (index === 0) {
-          marker.bindPopup(content, customerOptions).openPopup() // 标记点击弹窗，并打开
-        } else {
-          marker.bindPopup(content, customerOptions) // 标记点击弹窗
+          that.recordActive = item
         }
+        m = m + item.mileage
+        l = m / that.sumMarks * 100
+        let bColor = ''
+        if (item.mileage <= 2) {
+          bColor = 'rgb(51, 102, 153)'
+        } else if (item.mileage > 2 && item.mileage <= 4) {
+          bColor = 'rgb(0, 255, 0)'
+        } else if (item.mileage > 4 && item.mileage <= 5) {
+          bColor = 'rgb(245, 7, 19)'
+        } else {
+          bColor = 'rgb(149, 2, 34)'
+        }
+        // 设置播放条
+        that.$set(that.marks, l, item.mileage)
+        that.$set(that.marksWay, index, { color: bColor, width: item.mileage / that.sumMarks * 100 })
+        console.log('marks', that.marksWay)
+        // 自定义其他事件
+        marker.on('click', () => {
+          that.setPopup(marker, item)
+        })
         that.marker.push(marker) // 保存标记，便于清空
       })
       that.markerGroup = L.layerGroup(that.marker)
@@ -256,17 +331,45 @@ export default {
       const polyline = L.polyline(latlngs, { color: 'red' }).addTo(map)
       map.fitBounds(polyline.getBounds())
     },
+    // 设置标记弹窗信息
+    setPopup (marker, data) {
+      // 弹窗配置
+      const customerOptions = {
+        closeButton: true,
+        minWidth: 200,
+        minHeight: 500
+      }
+      var content =
+        '<div class="c-popup">' +
+        '<div class="c-row">' +
+        '<div><span class="c-row-title">速度(Km/h)：</span>' +
+        data.speed +
+        ' Km/h</div>' +
+        '</div>' +
+        '<div class="c-row">' +
+        '<div><span class="c-row-title">电压：</span>' +
+        data.batteryVoltage +
+        ' V</div>' +
+        '</div>' +
+        '<div class="c-row">' +
+        '<div><span class="c-row-title">时间：</span>' +
+        data.device_time +
+        '</div>' +
+        '</div>' +
+        '</div>'
+      console.log('data->', data)
+      // 标记点击弹窗
+      marker.bindPopup(content, customerOptions).openPopup()
+    },
     // 打开指定弹出框
     openPop (record, index) {
       const that = this
       return {
-        props: {
-          locationAdd: null
-        },
         on: {
           click: () => {
-            that.map.setView(L.latLng(record.latitude, record.longitude), 13)
-            that.marker[index].openPopup()
+            that.map.setView(L.latLng(record.latitude, record.longitude))
+            // that.marker[index].openPopup()
+            that.setPopup(that.marker[index], record)
           }
         }
       }
@@ -274,7 +377,7 @@ export default {
     initMap () {
       this.map = L.map('map', {
         center: [39.064576, 117.06969],
-        zoom: 4.5,
+        zoom: 13,
         zoomControl: false,
         doubleClickZoom: false,
         attributionControl: false // 移除右下角leaflet标识
@@ -454,6 +557,10 @@ export default {
             that.pageLen = res.data.totalPage
             const list = res.data.rows
             list.map((item, index) => {
+              // 添加index值
+              that.$set(list[index], 'index', index)
+              that.$set(list[index], 'length', res.data.rows.length)
+
               // GPS坐标(WGS84)转为GCJ-02火星坐标(适用高德、谷歌)
               that.AMap.convertFrom([item.latitude, item.longitude], 'gps', function (status, result) {
                 if (result.info === 'ok') {
@@ -471,8 +578,9 @@ export default {
                   that.$set(list[index], 'addr', '地址无法解析')
                 }
               })
+              that.sumMarks = that.sumMarks + item.mileage
             })
-            console.log('未负值', res)
+            console.log('接口获取数据', res)
             that.deviceLocList = that.deviceLocList.concat(list)
             // 设置标记
             that.getPointer(that.map, that.deviceLocList)
@@ -490,6 +598,25 @@ export default {
       }
       this.deviceLocList = []
       this.getDeviceLocList()
+      this.showPlay = true
+    },
+    onChangeFrom (date, dateString) {
+      this.form.from = dateString
+    },
+    onChangeTo (date, dateString) {
+      this.form.to = dateString
+    },
+    // 播放路径
+    play () {
+      const that = this
+      that.playActive = true
+      that.map.setView(L.latLng(that.recordActive.latitude, that.recordActive.longitude))
+      that.setPopup(that.marker[0], that.recordActive)
+    },
+    // 暂停路径
+    pause () {
+      const that = this
+      that.playActive = false
     }
   }
 }
@@ -613,5 +740,20 @@ export default {
 }
 .ant-table-tbody > tr > td + td {
   color: rgb(144 147 153);
+}
+.ant-btn.is-active {
+  color: #fff;
+  background-color: #1890ff;
+  border-color: #1890ff;
+}
+.marks {
+  display: inline-block;
+  height: 3px;
+}
+.ant-slider-handle {
+  z-index: 10;
+}
+.ant-slider-dot-active {
+  display: none;
 }
 </style>

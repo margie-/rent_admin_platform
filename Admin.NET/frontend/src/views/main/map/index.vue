@@ -116,6 +116,7 @@
           style="position: absolute; bottom: 15px; right: 30px; z-index: 1000; font-size:12px;"
         >报警信息</a-button>
       </a-popover>
+      <!-- 地图 -->
       <div>
         <div id="map">
           <a-drawer
@@ -251,6 +252,9 @@ export default {
         console.error(err)
       })
   },
+  created () {
+    window.showTrack = this.showTrack
+  },
   methods: {
     // 设置地图标记和弹窗
     getPointer (map, loc) {
@@ -259,10 +263,12 @@ export default {
       // 如果有标记则清空
       if (that.markerGroup !== null) {
         that.markerGroup.clearLayers()
+        that.markerGroup = null
       }
 
+      console.log('改变后的数据', loc)
       loc.map((item) => {
-        const marker = L.marker([item.cur_log, item.cur_lat]).addTo(map) // 设置标记经纬度
+        const marker = L.marker([item.cur_lat, item.cur_log]).addTo(map) // 设置标记经纬度
         // map.addLayer(marker) // 添加标记
         marker.setIcon(
           L.icon({
@@ -271,130 +277,119 @@ export default {
             iconSize: [20, 25]
           })
         )
-        var customerOptions = {
-          closeButton: true,
-          minWidth: 300,
-          minHeight: 500
-        }
-        // 设备状态展示
-        const deviceStatus = item.deviceStatus ? (item.deviceStatus === 1 ? '在线' : '离线') : '无状态'
-        const fortifiedState = item.fortifiedState ? (item.fortifiedState === 1 ? '设防' : '撤防') : '无状态'
-        const locType = item.locType === 1 ? 'LBS' : 'GPS'
-        const onOffState = item.on_off_state === 1 ? '通电' : '断电'
-        let dotLine = ''
-        let gms = ''
-        for (let i = 0; i < 5; i++) {
-          if (i < item.gps_grage) {
-            dotLine = dotLine + '<div class="dotLine green"></div>'
-          } else {
-            dotLine = dotLine + '<div class="dotLine"></div>'
-          }
-          if (i < item.gms_grage) {
-            gms = gms + '<div class="dotLine green"></div>'
-          } else {
-            gms = gms + '<div class="dotLine"></div>'
-          }
-        }
-        that.geocoderObject.getAddress([item.cur_lat, item.cur_log], (status, { regeocode }) => {
-          if (status === 'complete' && regeocode) {
-            // result为对应的地理位置详细信息
-            const locationAdd = regeocode.formattedAddress
-            var content =
-              '<div class="c-popup">' +
-              '<div class="c-row ant-row-flex-space-between">' +
-              '<div class="c-row" style="align-items: center;"><span class="c-row-title" style="padding-right:5px">GPS</span>' +
-              dotLine +
-              '</div>' +
-              '<div class="c-row" style="align-items: center;"><span class="c-row-title" style="padding-right:5px">GSM</span>' +
-              gms +
-              '</div>' +
-              '</div>' +
-              '<div class="c-row">' +
-              '<div><span class="c-row-title">名称：</span>' +
-              item.deviceName +
-              '</div>' +
-              '<div style="width:50%"><span class="c-row-title">状态：</span>' +
-              deviceStatus +
-              '</div>' +
-              '</div>' +
-              '<div class="c-row">' +
-              '<div><span class="c-row-title">设备号：</span>' +
-              item.deviceNo +
-              '</div>' +
-              '<div style="width:50%"><span class="c-row-title">设防状态：</span>' +
-              fortifiedState +
-              '</div>' +
-              '</div>' +
-              '<div class="c-row">' +
-              '<div><span class="c-row-title">控制：</span>' +
-              onOffState +
-              '</div>' +
-              '<div style="width:50%"><span class="c-row-title">定位类型：</span>' +
-              locType +
-              '</div>' +
-              '</div>' +
-              '<div class="c-row">' +
-              '<div><span class="c-row-title">当日里程(公里)：</span>' +
-              item.cur_day_miles +
-              '</div>' +
-              '<div style="width:50%"><span class="c-row-title">总里程(公里)：</span>' +
-              item.cur_gps_miles +
-              '</div>' +
-              '</div>' +
-              '<div class="c-row">' +
-              '<div><span class="c-row-title">电压：</span>' +
-              item.batteryVoltage +
-              '</div>' +
-              '<div style="width:50%"><span class="c-row-title">FAC：</span>' +
-              item.sumMileCount +
-              '</div>' +
-              '</div>' +
-              '<div class="c-row">' +
-              '<div><span class="c-row-title">通信：</span>' +
-              item.lastComDtime +
-              '</div>' +
-              '</div>' +
-              '<div class="c-row">' +
-              '<div><span class="c-row-title">定位：</span>' +
-              item.cur_lat + ' , ' + item.cur_log +
-              '</div>' +
-              '</div>' +
-              '<div class="c-row">' +
-              '<div><span class="c-row-title">地址：</span>' +
-              locationAdd +
-              '</div>' +
-              '</div>' +
-              '<div class="c-row-bottom" ref="cPopBtm">' +
-              '</div>' +
-              '</div>'
-            // var content2 =
-            //   '<div class="c-popup">' +
-            //   '<div class="c-row">' +
-            //   '<div><span class="c-row-title">名称：</span>' +
-            //   item.deviceName +
-            //   '</div>' +
-            //   '<div style="width:50%"><span class="c-row-title">状态：</span>' +
-            //   item.devicestatus +
-            //   '</div>' +
-            //   '</div>' +
-            //   '</div>'
-            // if (index === 0) {
-            //   marker.bindPopup(content2, customerOptions).openPopup() // 默认展开标记点击弹窗
-            //   marker.bindTooltip(item.name).openTooltip() // 默认展开tooltip
-            // } else {
-            marker.bindPopup(content, customerOptions) // 标记点击弹窗
-            // }
-            // 自定义其他事件
-            // marker.on('click', () => {
-            //   console.log(item.deviceName + ' -> 123123')
-            // })
-            that.marker.push(marker) // 保存标记，便于清空
-          }
+        // 自定义其他事件
+        marker.on('click', () => {
+          that.setPopup(marker, item)
         })
+        that.marker.push(marker) // 保存标记，便于清空
       })
       that.markerGroup = L.layerGroup(that.marker)
       map.addLayer(that.markerGroup)
       that.refresh()
+    },
+    // 设置标记弹窗信息
+    setPopup (marker, data) {
+      // 弹窗配置
+      const customerOptions = {
+        closeButton: true,
+        minWidth: 300,
+        minHeight: 500
+      }
+      // 设置当前选中设置信息
+      this.deviceNo = data.deviceNo
+      this.alarmList = data.alarmList
+      // 设备状态展示
+      const deviceStatus = data.deviceStatus ? (data.deviceStatus === 1 ? '在线' : '离线') : '无状态'
+      const fortifiedState = data.fortifiedState ? (data.fortifiedState === 1 ? '设防' : '撤防') : '无状态'
+      const locType = data.locType === 1 ? 'LBS' : 'GPS'
+      const onOffState = data.on_off_state === 1 ? '通电' : '断电'
+      let dotLine = ''
+      let gms = ''
+      for (let i = 0; i < 5; i++) {
+        if (i < data.gps_grage) {
+          dotLine = dotLine + '<div class="dotLine green"></div>'
+        } else {
+          dotLine = dotLine + '<div class="dotLine"></div>'
+        }
+        if (i < data.gms_grage) {
+          gms = gms + '<div class="dotLine green"></div>'
+        } else {
+          gms = gms + '<div class="dotLine"></div>'
+        }
+      }
+      var content =
+        '<div class="c-popup">' +
+        '<div class="c-row ant-row-flex-space-between">' +
+        '<div class="c-row" style="align-items: center;"><span class="c-row-title" style="padding-right:5px">GPS</span>' +
+        dotLine +
+        '</div>' +
+        '<div class="c-row" style="align-items: center;"><span class="c-row-title" style="padding-right:5px">GSM</span>' +
+        gms +
+        '</div>' +
+        '</div>' +
+        '<div class="c-row">' +
+        '<div><span class="c-row-title">名称：</span>' +
+        data.deviceName +
+        '</div>' +
+        '<div style="width:50%"><span class="c-row-title">状态：</span>' +
+        deviceStatus +
+        '</div>' +
+        '</div>' +
+        '<div class="c-row">' +
+        '<div><span class="c-row-title">设备号：</span>' +
+        data.deviceNo +
+        '</div>' +
+        '<div style="width:50%"><span class="c-row-title">设防状态：</span>' +
+        fortifiedState +
+        '</div>' +
+        '</div>' +
+        '<div class="c-row">' +
+        '<div><span class="c-row-title">控制：</span>' +
+        onOffState +
+        '</div>' +
+        '<div style="width:50%"><span class="c-row-title">定位类型：</span>' +
+        locType +
+        '</div>' +
+        '</div>' +
+        '<div class="c-row">' +
+        '<div><span class="c-row-title">当日里程(公里)：</span>' +
+        data.cur_day_miles +
+        '</div>' +
+        '<div style="width:50%"><span class="c-row-title">总里程(公里)：</span>' +
+        data.cur_gps_miles +
+        '</div>' +
+        '</div>' +
+        '<div class="c-row">' +
+        '<div><span class="c-row-title">电压：</span>' +
+        data.batteryVoltage +
+        '</div>' +
+        '<div style="width:50%"><span class="c-row-title">FAC：</span>' +
+        data.sumMileCount +
+        '</div>' +
+        '</div>' +
+        '<div class="c-row">' +
+        '<div><span class="c-row-title">通信：</span>' +
+        data.lastComDtime +
+        '</div>' +
+        '</div>' +
+        '<div class="c-row">' +
+        '<div><span class="c-row-title">定位：</span>' +
+        data.cur_lat + ' , ' + data.cur_log +
+        '</div>' +
+        '</div>' +
+        '<div class="c-row">' +
+        '<div><span class="c-row-title">地址：</span>' +
+        data.addr +
+        '</div>' +
+        '</div>' +
+        '<div class="c-row-bottom" ref="cPopBtm">' +
+        '<a href="javascript:void(0)" onclick="showTrack()">轨迹</a>' +
+        '<a href="javascript:void(0)">报警</a>' +
+        '</div>' +
+        '</div>'
+      console.log('data->', data)
+      // 标记点击弹窗
+      marker.bindPopup(content, customerOptions).openPopup()
     },
     // 打开指定弹出框
     openPop (record, index) {
@@ -403,7 +398,8 @@ export default {
         on: {
           click: () => {
             that.map.setView(L.latLng(record.cur_lat, record.cur_log), 13)
-            that.marker[index].openPopup()
+            that.setPopup(that.marker[index], record)
+            // that.marker[index].openPopup()
             if (record.alarmList != null) {
               that.showAlarmBtn = true
               record.alarmList.forEach(ele => {
@@ -412,9 +408,6 @@ export default {
             } else {
               that.showAlarmBtn = false
             }
-            // 设置当前选中设置信息
-            that.deviceNo = record.deviceNo
-            that.alarmList = record.alarmList
           }
         }
       }
@@ -619,17 +612,27 @@ export default {
           if (res.data.rows.length > 0) {
             that.pageLen = res.data.totalPage
             const list = res.data.rows
-            list.map(item => {
+            list.forEach((item, index) => {
               // GPS坐标(WGS84)转为GCJ-02火星坐标(适用高德、谷歌)
-              that.AMap.convertFrom([item.cur_lat, item.cur_log], 'gps', function (status, result) {
+              that.AMap.convertFrom([item.cur_log, item.cur_lat], 'gps', function (status, result) {
                 if (result.info === 'ok') {
-                  item.cur_lat = result.locations[0].lat
-                  item.cur_log = result.locations[0].lng
+                  that.$set(list[index], 'cur_lat', result.locations[0].lat)
+                  that.$set(list[index], 'cur_log', result.locations[0].lng)
                 }
               })
-              return item
+
+              // 逆地理解析，坐标解析为地址
+              that.geocoderObject.getAddress([item.cur_log, item.cur_lat], (status, { regeocode }) => {
+                if (status === 'complete' && regeocode) {
+                  // result为对应的地理位置详细信息
+                  that.$set(list[index], 'addr', regeocode.formattedAddress)
+                } else {
+                  that.$set(list[index], 'addr', '地址无法解析')
+                }
+              })
             })
 
+            console.log('接口获取数据', res)
             that.deviceList = that.deviceList.concat(list)
             // 设置标记
             that.getPointer(that.map, that.deviceList)
@@ -686,6 +689,13 @@ export default {
           }
         }, 1000)
       }
+    },
+    // 跳转轨迹
+    showTrack () {
+      this.$router.push({
+        path: '/playback',
+        query: this.deviceNo
+      })
     }
   }
 }
