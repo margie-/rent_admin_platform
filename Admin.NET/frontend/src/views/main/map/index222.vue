@@ -78,7 +78,7 @@
               </div>
               <div>
                 <!-- <a-tag color="orange">时间</a-tag> -->
-                <a-icon type="clock-circle" />
+                <span style="color:#fa8c16">{{ record.staytime }}</span>
                 {{ record.device_time }}
               </div>
             </div>
@@ -329,8 +329,8 @@ export default {
       map.addLayer(that.markerGroup)
       console.log('坐标->', latlngs)
       // 绘制折线
-      const polyline = L.polyline(latlngs, { color: 'red' }).addTo(map)
-      map.fitBounds(polyline.getBounds())
+      L.polyline(latlngs, { color: 'red' }).addTo(map)
+      // map.fitBounds(latlngs)
     },
     // 设置标记弹窗信息
     setPopup (marker, data) {
@@ -358,7 +358,7 @@ export default {
         '</div>' +
         '</div>' +
         '</div>'
-      console.log('data->', data)
+      // console.log('data->', data)
       // 标记点击弹窗
       marker.bindPopup(content, customerOptions).openPopup()
     },
@@ -368,7 +368,10 @@ export default {
       return {
         on: {
           click: () => {
-            that.map.setView(L.latLng(record.latitude, record.longitude))
+            that.map.setView(L.latLng(record.latitude, record.longitude), 15)
+            // that.map.setView([record.latitude, record.longitude])
+            console.log('设置中心点-->', record.latitude + '  ' + record.longitude)
+            console.log('-实际中心点-->', that.map.getCenter())
             // that.marker[index].openPopup()
             that.setPopup(that.marker[index], record)
           }
@@ -378,8 +381,8 @@ export default {
     initMap () {
       this.map = L.map('map', {
         center: [39.064576, 117.06969],
-        zoom: 13,
-        zoomControl: false,
+        zoom: 4.5,
+        zoomControl: true,
         doubleClickZoom: false,
         attributionControl: false // 移除右下角leaflet标识
       })
@@ -614,14 +617,14 @@ export default {
       that.playActive = true
       let index = 0
       const len = that.marker.length
-      that.map.setView(L.latLng(that.recordActive.latitude, that.recordActive.longitude))
+      that.map.setView(L.latLng(that.recordActive.latitude, that.recordActive.longitude), 15)
       that.setPopup(that.marker[index], that.recordActive)
       that.PlayPos = that.marksWay[index].pos
       that.timer = setInterval(() => {
         if (index < len - 1) {
           index++
-          that.map.setView(L.latLng(that.recordActive.latitude, that.recordActive.longitude))
-          that.setPopup(that.marker[index], that.recordActive)
+          that.map.setView(L.latLng(that.deviceLocList[index].latitude, that.deviceLocList[index].longitude), 15)
+          that.setPopup(that.marker[index], that.deviceLocList[index])
           that.PlayPos = that.marksWay[index].pos
         } else {
           clearInterval(that.timer)

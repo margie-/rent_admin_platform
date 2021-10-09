@@ -747,7 +747,11 @@ export default {
 }
 .device-tabs {
   height: calc(60% - 40px);
-  overflow: visible;
+  // overflow-y: scroll;
+  .ant-table-wrapper {
+    height: calc(100% - 100px);
+    overflow-y: scroll;
+  }
   > .ant-tabs-content {
     height: calc(100% - 40px);
     > .ant-tabs-tabpane {
