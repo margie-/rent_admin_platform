@@ -389,7 +389,7 @@ export default {
         '</div>'
       console.log('data->', data)
       // 标记点击弹窗
-      marker.bindPopup(content, customerOptions).openPopup()
+      L.popup(customerOptions).setLatLng([data.cur_lat, data.cur_log]).setContent(content).openOn(this.map)
     },
     // 打开指定弹出框
     openPop (record, index) {
@@ -612,12 +612,18 @@ export default {
           if (res.data.rows.length > 0) {
             that.pageLen = res.data.totalPage
             const list = res.data.rows
+            const len = list.length
             list.forEach((item, index) => {
               // GPS坐标(WGS84)转为GCJ-02火星坐标(适用高德、谷歌)
               that.AMap.convertFrom([item.cur_log, item.cur_lat], 'gps', function (status, result) {
                 if (result.info === 'ok') {
                   that.$set(list[index], 'cur_lat', result.locations[0].lat)
                   that.$set(list[index], 'cur_log', result.locations[0].lng)
+                }
+                if (index === len - 1 && status === 'complete') {
+                  that.loading = false
+                  // 设置标记
+                  that.getPointer(that.map, list, that.stayLocList)
                 }
               })
 
@@ -635,10 +641,10 @@ export default {
             console.log('接口获取数据', res)
             that.deviceList = that.deviceList.concat(list)
             // 设置标记
-            that.getPointer(that.map, that.deviceList)
+            // that.getPointer(that.map, that.deviceList)
           }
         }
-        that.loading = false
+        // that.loading = false
         // console.log('GetMapDeviceList init -> ', res.data.rows)
       })
     },
